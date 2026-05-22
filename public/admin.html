@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRAC · Administration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ── TEXTURE / VIGNETTE ──────────────────────────────── -->
+  <div class="bg-texture"></div>
+  <div class="bg-vignette"></div>
+
+  <!-- ══════════════════════════════════════════════════════
+       ÉCRAN DE CONNEXION
+  ══════════════════════════════════════════════════════════ -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="brand-mark">
+        <img src="crac-logo.svg" alt="CRAC" onerror="this.style.display='none'">
+      </div>
+      <h1 class="login-title">CRAC</h1>
+      <p class="login-sub">Administration</p>
+
+      <form id="login-form" autocomplete="off">
+        <div class="field">
+          <label for="pwd-input">Mot de passe</label>
+          <input type="password" id="pwd-input" placeholder="••••••••" autofocus required>
+        </div>
+        <div class="error-msg" id="login-error"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+          <span id="login-btn-text">Se connecter</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       DASHBOARD
+  ══════════════════════════════════════════════════════════ -->
+  <div id="dashboard" class="hidden">
+
+    <header class="site-header">
+      <div class="site-brand">
+        <div class="brand-mark sm">
+          <img src="crac-logo.svg" alt="CRAC" onerror="this.style.display='none'">
+        </div>
+        <div class="brand-name">
+          <span class="brand-name-main">CRAC</span>
+          <span class="brand-name-sub">Administration</span>
+        </div>
+      </div>
+      <div class="site-actions">
+        <a href="/display.html" target="_blank" class="btn btn-ghost">
+          ↗&nbsp; Voir l'affichage
+        </a>
+        <button id="btn-logout" class="btn btn-ghost">Déconnexion</button>
+      </div>
+    </header>
+
+    <main class="admin-grid">
+
+      <!-- ── CARTE : Configuration FFR ─────────────────── -->
+      <section class="card" id="card-ffr">
+
+        <div class="card-header">
+          <span class="card-title">Configuration</span>
+          <span class="card-title-accent">FFR</span>
+        </div>
+
+        <div class="card-body">
+
+          <div class="section-block">
+            <p class="section-label">Source des données</p>
+            <div class="field">
+              <label for="ffr-url">URL de la poule</label>
+              <input type="url" id="ffr-url"
+                     placeholder="https://monclubhouse.ffr.fr/…">
+              <small>Copiez l'URL de la page de votre poule sur monclubhouse.ffr.fr</small>
+            </div>
+            <div class="field">
+              <label for="ffr-name">Nom affiché sur l'écran</label>
+              <input type="text" id="ffr-name" placeholder="Championnat Régional — Poule B">
+            </div>
+            <div class="field">
+              <label for="crac-team-name">Nom de l'équipe CRAC (tel qu'il apparaît sur la FFR)</label>
+              <input type="text" id="crac-team-name" placeholder="CRAC ANCIZES">
+              <small>Permet de mettre le match CRAC en avant sur l'écran</small>
+            </div>
+            <button class="btn btn-primary" id="btn-save-config">Enregistrer</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section-block">
+            <p class="section-label">Statut du scraping</p>
+            <div class="status-box" id="scrape-status-box">
+              <div class="status-badge" id="status-badge">
+                <span class="badge-dot"></span>
+                <span id="badge-text">Chargement…</span>
+              </div>
+              <div class="status-detail" id="status-detail"></div>
+            </div>
+            <button class="btn btn-secondary" id="btn-scrape">
+              <span id="scrape-btn-icon">⟳</span>
+              <span id="scrape-btn-text">Actualiser maintenant</span>
+            </button>
+            <small>Actualisation automatique toutes les 3 minutes</small>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section-block">
+            <p class="section-label">Durées d'affichage (secondes)</p>
+            <div class="durations-row">
+              <div class="field">
+                <label for="dur-scores">Scores</label>
+                <input type="number" id="dur-scores" min="5" max="300" placeholder="30">
+              </div>
+              <div class="field">
+                <label for="dur-sponsors">Sponsors</label>
+                <input type="number" id="dur-sponsors" min="5" max="300" placeholder="15">
+              </div>
+            </div>
+            <button class="btn btn-secondary" id="btn-save-durations">Enregistrer les durées</button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CARTE : Gestion des sponsors ──────────────── -->
+      <section class="card" id="card-sponsors">
+
+        <div class="card-header">
+          <span class="card-title">Partenaires</span>
+          <span class="card-title-accent">&amp; Sponsors</span>
+        </div>
+
+        <div class="card-body">
+
+          <div class="section-block">
+            <div class="upload-zone" id="upload-zone" tabindex="0" role="button"
+                 aria-label="Zone d'upload de logos">
+              <input type="file" id="file-input" accept="image/*" multiple hidden>
+              <div class="upload-arrow">↑</div>
+              <p class="upload-label">Cliquez ou déposez vos logos ici</p>
+              <p class="upload-hint">JPG · PNG · SVG · WebP — max 5 Mo</p>
+            </div>
+            <div class="upload-progress" id="upload-progress"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section-block">
+            <p class="section-label">
+              Logos enregistrés
+              <span class="count-pill" id="sponsor-count">0</span>
+            </p>
+            <div class="sponsors-list" id="sponsors-list">
+              <p class="empty-state" id="sponsors-empty">Aucun sponsor ajouté</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── TOASTS ─────────────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

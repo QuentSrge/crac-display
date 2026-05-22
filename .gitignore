@@ -1,0 +1,8 @@
+node_modules/
+uploads/sponsors/
+design-extract/
+design-extract.txt
+*.bin
+*.log
+npm-debug.log*
+.claude/

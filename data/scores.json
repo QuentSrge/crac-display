@@ -1,0 +1,28 @@
+{
+  "competition": "Régionale 1 - Championnat Territorial",
+  "pool": "Championnat Régional Auvergne — Poule B",
+  "round": "Journée 8",
+  "lastUpdate": "2026-05-22T14:06:08.108Z",
+  "matches": [
+    {
+      "id": 1,
+      "home": "FC Moulinois",
+      "away": "SC ACussetois",
+      "scoreHome": 26,
+      "scoreAway": 30,
+      "status": "finished",
+      "homeIsCrac": false,
+      "awayIsCrac": false
+    },
+    {
+      "id": 2,
+      "home": "FC Moulinois",
+      "away": "Ol RC Riom Es Montagnes",
+      "scoreHome": 64,
+      "scoreAway": 11,
+      "status": "finished",
+      "homeIsCrac": false,
+      "awayIsCrac": false
+    }
+  ]
+}

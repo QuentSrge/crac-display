@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>CRAC · Club-house Display</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="display.css" />
+</head>
+<body>
+
+<div id="stage-wrap">
+  <div id="stage">
+
+    <!-- Background layers -->
+    <div class="watermark"><img src="crac-logo.svg" alt="" /></div>
+    <div class="texture"></div>
+    <div class="vignette"></div>
+
+    <!-- Chrome (header + main + footer) -->
+    <div class="chrome">
+
+      <div class="header" id="header">
+        <!-- rendered by display.js -->
+      </div>
+
+      <div class="main" id="main">
+        <div class="view active" id="view-scores">
+          <!-- rendered by display.js -->
+        </div>
+        <div class="view" id="view-sponsors">
+          <!-- rendered by display.js -->
+        </div>
+      </div>
+
+      <div class="footer" id="footer">
+        <!-- rendered by display.js -->
+      </div>
+
+    </div><!-- /.chrome -->
+
+    <!-- Progress bar — absolutely at bottom of stage -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+  </div><!-- /#stage -->
+</div><!-- /#stage-wrap -->
+
+<script src="display.js"></script>
+</body>
+</html>
