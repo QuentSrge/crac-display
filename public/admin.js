@@ -106,8 +106,9 @@ async function loadStatus() {
       document.getElementById('crac-team-name').value = data.config.cracTeamName || '';
 
       const d = data.config.displayDurations || {};
-      document.getElementById('dur-scores').value   = (d.scores   || 30000) / 1000;
-      document.getElementById('dur-sponsors').value = (d.sponsors || 15000) / 1000;
+      document.getElementById('dur-scores').value      = (d.scores     || 30000) / 1000;
+      document.getElementById('dur-classement').value  = (d.classement || 20000) / 1000;
+      document.getElementById('dur-sponsors').value    = (d.sponsors   || 15000) / 1000;
     }
 
     renderScrapeStatus(data.scrapeStatus);
@@ -168,17 +169,18 @@ document.getElementById('btn-save-config').addEventListener('click', async () =>
 });
 
 document.getElementById('btn-save-durations').addEventListener('click', async () => {
-  const scores   = parseInt(document.getElementById('dur-scores').value,   10) * 1000;
-  const sponsors = parseInt(document.getElementById('dur-sponsors').value, 10) * 1000;
+  const scores     = parseInt(document.getElementById('dur-scores').value,      10) * 1000;
+  const classement = parseInt(document.getElementById('dur-classement').value,  10) * 1000;
+  const sponsors   = parseInt(document.getElementById('dur-sponsors').value,    10) * 1000;
 
-  if (scores < 5000 || sponsors < 5000) {
+  if (scores < 5000 || classement < 5000 || sponsors < 5000) {
     toast('Durée minimum : 5 secondes', 'error');
     return;
   }
   try {
     const res = await apiFetch('/api/admin/config', {
       method: 'PUT',
-      body:   JSON.stringify({ displayDurations: { scores, sponsors } }),
+      body:   JSON.stringify({ displayDurations: { scores, classement, sponsors } }),
     });
     res.ok ? toast('Durées enregistrées', 'success') : toast('Erreur', 'error');
   } catch { toast('Erreur réseau', 'error'); }

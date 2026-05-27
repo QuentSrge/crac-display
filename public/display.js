@@ -3,9 +3,10 @@
    ============================================================ */
 
 // ── State ─────────────────────────────────────────────────
-let scores   = null;
-let sponsors = [];
-let config   = {};
+let scores     = null;
+let classement = null;
+let sponsors   = [];
+let config     = {};
 
 let currentViewIdx = 0;
 let progressStart  = 0;
@@ -14,10 +15,11 @@ let tickTimer      = null;
 let sponsorIdx     = 0;
 let sponsorTimer   = null;
 
-// ── Views (seulement Scores + Sponsors pour l'instant) ────
+// ── Views ─────────────────────────────────────────────────
 const VIEWS = [
-  { id: 'scores',   label: 'Scores',      getDuration() { return config?.displayDurations?.scores   || 30_000; } },
-  { id: 'sponsors', label: 'Partenaires', getDuration() { return config?.displayDurations?.sponsors || 15_000; } },
+  { id: 'scores',     label: 'Résultats',   getDuration() { return config?.displayDurations?.scores     || 30_000; } },
+  { id: 'classement', label: 'Classement',  getDuration() { return config?.displayDurations?.classement || 20_000; } },
+  { id: 'sponsors',   label: 'Partenaires', getDuration() { return config?.displayDurations?.sponsors   || 15_000; } },
 ];
 
 // ── DOM refs ──────────────────────────────────────────────
@@ -101,7 +103,6 @@ function renderScoreboard() {
   const featured = scores.matches.find(m => m.homeIsCrac || m.awayIsCrac);
   const others   = scores.matches.filter(m => !m.homeIsCrac && !m.awayIsCrac);
 
-  // Density class based on number of non-featured rows
   const n = others.length;
   const density = n >= 7 ? 'tight' : n >= 5 ? 'compact' : '';
 
@@ -118,13 +119,11 @@ function renderScoreboard() {
     <div class="scoreboard ${density}">
   `;
 
-  // Featured CRAC match
   if (featured) {
     const sH = featured.scoreHome;
     const sA = featured.scoreAway;
     const homeWin = sH != null && sA != null && sH > sA;
     const awayWin = sH != null && sA != null && sA > sH;
-    const isScheduled = featured.status === 'upcoming' || (sH == null && sA == null);
 
     html += `
       <div class="match-featured">
@@ -146,7 +145,6 @@ function renderScoreboard() {
       </div>`;
   }
 
-  // Regular rows
   for (const m of others) {
     const sH = m.scoreHome;
     const sA = m.scoreAway;
@@ -169,13 +167,88 @@ function renderScoreboard() {
       </div>`;
   }
 
-  // If no featured match, show all matches as regular rows
   if (!featured && others.length === 0) {
     html += `<div class="no-data">Aucun match programmé</div>`;
   }
 
   html += `</div>`;
   el.innerHTML = html;
+}
+
+// ── Render: Classement ────────────────────────────────────
+function renderClassement() {
+  const el = document.getElementById('view-classement');
+
+  const metaPool = classement?.pool || scores?.pool || config?.ffrPoolName || '';
+  const titleHtml = `
+    <div class="view-title">
+      <h2><span class="accent-bar"></span>Classement</h2>
+      <div class="meta">${metaPool ? `<strong>${esc(metaPool)}</strong>` : 'Poule'}</div>
+    </div>`;
+
+  if (!classement?.standings?.length) {
+    el.innerHTML = titleHtml + `
+      <div class="standings-table">
+        <div class="no-data">Classement en cours de chargement…</div>
+      </div>`;
+    return;
+  }
+
+  const rows = classement.standings;
+  const n = rows.length;
+  const density = n >= 12 ? 'tight' : n >= 9 ? 'compact' : '';
+
+  // Détermine si on affiche les colonnes points+/pts- selon les données disponibles
+  const hasPoints = rows.some(r => r.pointsFor != null || r.pointsAgainst != null);
+
+  const colTemplate = hasPoints
+    ? '68px 1fr 56px 56px 56px 56px 80px 80px 88px'
+    : '68px 1fr 56px 56px 56px 56px 88px';
+
+  const headCols = hasPoints
+    ? `<span class="col-rank">#</span>
+       <span class="col-team">Équipe</span>
+       <span class="col-stat">J</span>
+       <span class="col-stat">V</span>
+       <span class="col-stat">N</span>
+       <span class="col-stat">D</span>
+       <span class="col-stat">Pts+</span>
+       <span class="col-stat">Pts−</span>
+       <span class="col-pts">Pts</span>`
+    : `<span class="col-rank">#</span>
+       <span class="col-team">Équipe</span>
+       <span class="col-stat">J</span>
+       <span class="col-stat">V</span>
+       <span class="col-stat">N</span>
+       <span class="col-stat">D</span>
+       <span class="col-pts">Pts</span>`;
+
+  const rowsHtml = rows.map(r => {
+    const cracClass = r.teamIsCrac ? 'is-crac' : '';
+    const extraCols = hasPoints
+      ? `<span class="col-stat">${r.pointsFor ?? '—'}</span>
+         <span class="col-stat">${r.pointsAgainst ?? '—'}</span>`
+      : '';
+    return `
+      <div class="standings-row ${cracClass}" style="grid-template-columns:${colTemplate}">
+        <span class="col-rank">${r.rank ?? '—'}</span>
+        <span class="col-team">${esc(r.team)}</span>
+        <span class="col-stat">${r.played ?? '—'}</span>
+        <span class="col-stat">${r.won ?? '—'}</span>
+        <span class="col-stat">${r.drawn ?? '—'}</span>
+        <span class="col-stat">${r.lost ?? '—'}</span>
+        ${extraCols}
+        <span class="col-pts">${r.totalPoints ?? '—'}</span>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = titleHtml + `
+    <div class="standings-table ${density}">
+      <div class="standings-head" style="grid-template-columns:${colTemplate}">
+        ${headCols}
+      </div>
+      ${rowsHtml}
+    </div>`;
 }
 
 // ── Render: Sponsors ──────────────────────────────────────
@@ -236,7 +309,6 @@ function advanceSponsor() {
   if (!sorted.length) return;
   sponsorIdx = (sponsorIdx + 1) % sorted.length;
 
-  // Update active classes without re-rendering
   document.querySelectorAll('#view-sponsors .sponsor-slide').forEach((el, i) => {
     el.classList.toggle('active', i === sponsorIdx);
   });
@@ -277,11 +349,10 @@ function switchTo(idx) {
   renderFooter();
   startProgress(VIEWS[idx].getDuration());
 
-  // Sponsor cycling
   clearInterval(sponsorTimer);
   if (VIEWS[idx].id === 'sponsors') {
     sponsorIdx = 0;
-    renderSponsors(); // re-render to reset to first slide
+    renderSponsors();
     sponsorTimer = setInterval(advanceSponsor, 4500);
   }
 }
@@ -313,10 +384,18 @@ async function fetchScores() {
     const res = await fetch('/api/scores', { signal: AbortSignal.timeout(6000) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     scores = await res.json();
-    if (currentViewIdx === 0) renderScoreboard();
-    // Update competition pill in header
+    if (VIEWS[currentViewIdx].id === 'scores') renderScoreboard();
     const pill = headerEl.querySelector('.pill');
     if (pill) pill.textContent = scores?.pool || config?.ffrPoolName || 'Championnat Régional';
+  } catch { /* silencieux */ }
+}
+
+async function fetchClassement() {
+  try {
+    const res = await fetch('/api/classement', { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    classement = await res.json();
+    if (VIEWS[currentViewIdx].id === 'classement') renderClassement();
   } catch { /* silencieux */ }
 }
 
@@ -349,22 +428,21 @@ window.addEventListener('resize', applyScale);
 async function init() {
   applyScale();
 
-  await Promise.allSettled([fetchConfig(), fetchScores(), fetchSponsors()]);
+  await Promise.allSettled([fetchConfig(), fetchScores(), fetchClassement(), fetchSponsors()]);
 
   renderHeader();
   renderScoreboard();
+  renderClassement();
   renderSponsors();
   renderFooter();
 
-  // Start on scores view
   switchTo(0);
 
-  // Clock
   tickTimer = setInterval(tickClock, 1000);
 
-  // Polling
-  setInterval(fetchScores,   30_000);
-  setInterval(fetchSponsors, 60_000);
+  setInterval(fetchScores,     30_000);
+  setInterval(fetchClassement, 60_000);
+  setInterval(fetchSponsors,   60_000);
 }
 
 document.addEventListener('DOMContentLoaded', init);

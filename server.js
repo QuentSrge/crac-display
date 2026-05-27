@@ -60,6 +60,11 @@ app.get('/api/scores', (req, res) => {
   data ? res.json(data) : res.status(503).json({ error: 'Données indisponibles' });
 });
 
+app.get('/api/classement', (req, res) => {
+  const data = readJson('classement.json');
+  data ? res.json(data) : res.status(503).json({ error: 'Données indisponibles' });
+});
+
 app.get('/api/sponsors', (req, res) => res.json(readJson('sponsors.json', [])));
 
 app.get('/api/config', (req, res) => {

@@ -676,3 +676,117 @@ html, body {
   width: 56px;
   box-shadow: 0 0 12px var(--orange-glow);
 }
+
+/* ============================================================
+   VIEW 3 — CLASSEMENT
+   ============================================================ */
+
+.standings-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 8px;
+}
+
+.standings-head,
+.standings-row {
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  padding: 0 56px;
+}
+
+.standings-head {
+  padding-top: 4px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-strong);
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.standings-head span {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 700;
+  text-align: center;
+}
+.standings-head .col-team { text-align: left; }
+
+.standings-row {
+  padding-top: 13px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.standings-row.is-crac {
+  background: linear-gradient(90deg, rgba(255,106,26,0.10) 0%, transparent 55%);
+  border-color: rgba(255,106,26,0.22);
+}
+.standings-row.is-crac::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--orange);
+}
+
+.standings-row .col-rank {
+  font-family: var(--font-num);
+  font-size: 36px;
+  text-align: center;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.standings-row.is-crac .col-rank { color: var(--orange); }
+
+.standings-row .col-team {
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+  line-height: 1;
+}
+.standings-row.is-crac .col-team { color: var(--orange); }
+
+.standings-row .col-stat {
+  font-family: var(--font-num);
+  font-size: 30px;
+  text-align: center;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.standings-row .col-pts {
+  font-family: var(--font-num);
+  font-size: 36px;
+  text-align: center;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.standings-row.is-crac .col-pts { color: var(--orange); }
+
+/* Density — compact */
+.standings-table.compact .standings-row { padding-top: 9px; padding-bottom: 9px; }
+.standings-table.compact .col-rank  { font-size: 28px; }
+.standings-table.compact .col-team  { font-size: 26px; }
+.standings-table.compact .col-stat  { font-size: 24px; }
+.standings-table.compact .col-pts   { font-size: 28px; }
+
+/* Density — tight */
+.standings-table.tight .standings-row { padding-top: 6px; padding-bottom: 6px; }
+.standings-table.tight .col-rank  { font-size: 22px; }
+.standings-table.tight .col-team  { font-size: 21px; }
+.standings-table.tight .col-stat  { font-size: 20px; }
+.standings-table.tight .col-pts   { font-size: 22px; }
